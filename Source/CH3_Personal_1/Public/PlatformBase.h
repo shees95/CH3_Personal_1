@@ -11,8 +11,10 @@ class CH3_PERSONAL_1_API APlatformBase : public AActor
 {
 	GENERATED_BODY()
 protected:
-	FTransform OriginTransform; 
 	
+	FTransform OriginTransform; 
+	UPROPERTY(EditAnywhere)
+	bool IsRandomSpawn = false;
 	
 	
 	

@@ -21,6 +21,6 @@ void ASpinningPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	AddActorWorldRotation(FRotator(0,MoveSpeed * DeltaTime, 0));
+	AddActorLocalRotation(FRotator(0,MoveSpeed * DeltaTime, 0));
 	
 }

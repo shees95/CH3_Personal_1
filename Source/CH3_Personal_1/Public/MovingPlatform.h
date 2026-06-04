@@ -8,6 +8,8 @@
 
 class ATargetPoint;
 
+#define 틱 true
+
 UCLASS()
 class CH3_PERSONAL_1_API AMovingPlatform : public APlatformBase
 {
@@ -15,11 +17,17 @@ class CH3_PERSONAL_1_API AMovingPlatform : public APlatformBase
 private:
 	UPROPERTY(EditAnywhere)
 	ATargetPoint* EndPoint;
-	
+
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 200.f;
 	
-	float Alpha = 0.f;
+	FTimerHandle PlatformMoveHandle;
+	
+	UPROPERTY(EditAnywhere)
+	bool RandomPlatformMove = true;
+	
+	UPROPERTY(EditAnywhere)
+	float TimeToPlatformMove = 15.f;
 	
 	bool IsReverse = false;
 public:	
@@ -36,4 +44,5 @@ public:
 	void CheckIsReverse();
 	void SetIsReverse(bool _InIsReverse) { IsReverse = _InIsReverse; }
 	bool GetIsReverse() { return IsReverse; }
+	void MoveEndPoint();
 };

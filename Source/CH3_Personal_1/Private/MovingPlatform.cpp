@@ -4,6 +4,8 @@
 #include "MovingPlatform.h"
 #include "Engine/TargetPoint.h"
 
+#define 틱 true
+
 AMovingPlatform::AMovingPlatform()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -18,14 +20,17 @@ void AMovingPlatform::PostInitializeComponents()
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// 목적지 랜덤 이동
+	GetWorld()->GetTimerManager().SetTimer(PlatformMoveHandle, this, &AMovingPlatform::MoveEndPoint, TimeToPlatformMove);
+	
 }
 
 void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (!FMath::IsNearlyZero(MoveSpeed)) SetProgress(DeltaTime);
-	
+	SetProgress(DeltaTime);
 	
 }
 
@@ -43,4 +48,11 @@ void AMovingPlatform::CheckIsReverse()
 {
 	if (FVector::Dist(GetActorLocation(), EndPoint->GetActorLocation()) < 5.f && !GetIsReverse()) SetIsReverse(true);
 	if (FVector::Dist(GetActorLocation(), OriginTransform.GetLocation()) < 5.f && GetIsReverse()) SetIsReverse(false);
+}
+
+void AMovingPlatform::MoveEndPoint()
+{
+	EndPoint->AddActorLocalOffset(FVector(FMath::RandRange(30, 80), FMath::RandRange(30, 80), 0));
+	
+	GetWorld()->GetTimerManager().SetTimer(PlatformMoveHandle, this, &AMovingPlatform::MoveEndPoint, TimeToPlatformMove);
 }
