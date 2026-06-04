@@ -21,10 +21,15 @@ public:
 	ASpinningPlatform();
 	
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
-
+	
+	float TimeToAppear = 1.f;
+	float TimeToDisappear = 3.5f;
+	FTimerHandle BlickTimerHandle;
+	
 public:	
 	virtual void Tick(float DeltaTime) override;
+	void PlatformDisappear();
+	void PlatformAppear();
 	
 };

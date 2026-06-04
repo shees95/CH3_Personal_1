@@ -17,7 +17,7 @@ class CH3_PERSONAL_1_API AMovingPlatform : public APlatformBase
 private:
 	UPROPERTY(EditAnywhere)
 	ATargetPoint* EndPoint;
-
+	
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 200.f;
 	
@@ -34,7 +34,6 @@ public:
 	AMovingPlatform();
 	
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 public:	

@@ -13,6 +13,7 @@ class CH3_PERSONAL_1_API APlatformBase : public AActor
 protected:
 	
 	FTransform OriginTransform; 
+	
 	UPROPERTY(EditAnywhere)
 	bool IsRandomSpawn = false;
 	
@@ -22,11 +23,8 @@ public:
 	APlatformBase();
 
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };

@@ -11,11 +11,6 @@ APlatformBase::APlatformBase()
 	
 }
 
-void APlatformBase::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
 void APlatformBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,11 +20,3 @@ void APlatformBase::BeginPlay()
 	
 	
 }
-
-// Called every frame
-void APlatformBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

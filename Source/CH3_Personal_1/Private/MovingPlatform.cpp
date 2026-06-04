@@ -4,17 +4,10 @@
 #include "MovingPlatform.h"
 #include "Engine/TargetPoint.h"
 
-#define 틱 true
-
 AMovingPlatform::AMovingPlatform()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	MoveSpeed = 200.f;
-}
-
-void AMovingPlatform::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
 }
 
 void AMovingPlatform::BeginPlay()
@@ -52,7 +45,7 @@ void AMovingPlatform::CheckIsReverse()
 
 void AMovingPlatform::MoveEndPoint()
 {
-	EndPoint->AddActorLocalOffset(FVector(FMath::RandRange(30, 80), FMath::RandRange(30, 80), 0));
+	EndPoint->AddActorLocalOffset(FVector(FMath::RandRange(-80, 80), FMath::RandRange(-80, 80), 0));
 	
 	GetWorld()->GetTimerManager().SetTimer(PlatformMoveHandle, this, &AMovingPlatform::MoveEndPoint, TimeToPlatformMove);
 }
