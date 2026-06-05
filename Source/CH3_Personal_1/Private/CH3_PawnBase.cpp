@@ -100,6 +100,11 @@ void ACH3_PawnBase::Move(const FInputActionValue& Value)
 
 	const FVector MoveDirection = (Forward * MoveValue.Y) + (Right * MoveValue.X);
 
+	if (HandleSlopeMovement(MoveDirection, GetWorld()->GetDeltaSeconds()))
+	{
+		return;
+	}
+	
 	AddActorWorldOffset(MoveDirection.GetSafeNormal() * MoveSpeed * GetWorld()->GetDeltaSeconds(),true);
 }
 
@@ -152,45 +157,58 @@ void ACH3_PawnBase::ApplyGravity(float DeltaTime)
 
 void ACH3_PawnBase::CheckInAir()
 {
-	// 오르는 중
 	if (ZVelocity > 0.f)
 	{
 		bIsInAir = true;
 		MoveSpeed = OriginMoveSpeed / 2.f;
 		return;
 	}
-	
-	FHitResult HitResult;
-	
-	FVector Start = GetActorLocation();
-	FVector End = Start + FVector(0.f,0.f,-1000.f);
-	
+
+	FHitResult HitResult_L;
+	FHitResult HitResult_R;
+
+	const FVector Start_L = Mesh->GetSocketLocation(TEXT("Foot_L"));
+	const FVector End_L = Start_L + FVector(0.f, 0.f, -1000.f);
+
+	const FVector Start_R = Mesh->GetSocketLocation(TEXT("Foot_R"));
+	const FVector End_R = Start_R + FVector(0.f, 0.f, -1000.f);
+
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
-	
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
-	// 바닥 없음
-	if (!bHit)
+
+	const bool bHit_L = GetWorld()->LineTraceSingleByChannel(HitResult_L,Start_L,End_L,ECC_Visibility,Params);
+
+	const bool bHit_R = GetWorld()->LineTraceSingleByChannel(HitResult_R,Start_R,End_R,ECC_Visibility,Params);
+
+	if (!bHit_L && !bHit_R)
 	{
 		MoveSpeed = OriginMoveSpeed / 2.f;
 		bIsInAir = true;
 		return;
 	}
-	
-	const float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-	const float GroundDistance = HitResult.Distance - HalfHeight;
-	
-	if (GroundDistance <= 1.f)
+
+	FHitResult BestHit;
+
+	if (bHit_L && bHit_R)
 	{
-		Land(HitResult.ImpactPoint);
+		BestHit = HitResult_L.Distance <= HitResult_R.Distance ? HitResult_L : HitResult_R;
+	}
+	else
+	{
+		BestHit = bHit_L ? HitResult_L : HitResult_R;
+	}
+
+	const float GroundDistance = BestHit.Distance - StepUpHeight;
+
+	if (GroundDistance <= 5.f)
+	{
+		Land(BestHit.ImpactPoint);
 	}
 	else
 	{
 		MoveSpeed = OriginMoveSpeed / 2.f;
 		bIsInAir = true;
-		return;
 	}
-	
 }
 
 void ACH3_PawnBase::Land(FVector ImpactPoint)
@@ -199,10 +217,45 @@ void ACH3_PawnBase::Land(FVector ImpactPoint)
 	bIsInAir = false;
 	bIsJump = false;
 	MoveSpeed = OriginMoveSpeed;
+
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ImpactPoint.Z + StepUpHeight + 2.f));
+}
+
+bool ACH3_PawnBase::HandleSlopeMovement(const FVector& MoveDirection, float DeltaTime)
+{
+	if (MoveDirection.IsNearlyZero()) return false;
+	if (bIsInAir) return false;
 	
-	const float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-	const FVector CurrentLocation = GetActorLocation();
+	const float TraceStartHeight = 80.f;
+	const float TraceLength = 200.f;
+	const float MaxSlopeAngle = 45.f;
 	
-	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ImpactPoint.Z + HalfHeight + 1.f));
+	const FVector MoveOffset = MoveDirection.GetSafeNormal() * MoveSpeed * DeltaTime;
 	
+	FVector TraceStart = GetActorLocation() + MoveOffset;
+	TraceStart.Z += TraceStartHeight;
+	
+	const FVector TraceEnd = TraceStart + FVector(0.f, 0.f, -TraceLength);
+	
+	FHitResult HitResult;
+	
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, Params);
+	
+	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 0.05f, 0, 2.f);
+	
+	if (!bHit) return false;
+	
+	const float SlopeAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(HitResult.ImpactNormal, FVector::UpVector)));
+	
+	if (SlopeAngle > MaxSlopeAngle) return false;
+	
+	FVector NewLocation = GetActorLocation() + MoveOffset;
+	NewLocation.Z = HitResult.ImpactPoint.Z + StepUpHeight + 2.f;
+	
+	SetActorLocation(NewLocation, true);
+	
+	return true;
 }

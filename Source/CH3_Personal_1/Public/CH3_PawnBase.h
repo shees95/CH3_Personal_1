@@ -77,7 +77,7 @@ private:
 	float ZVelocity = 0.f;
 	
 	UPROPERTY(EditAnywhere)
-	float StepUpHeight = 25.f;
+	float StepUpHeight = 90.f;
 	
 	UPROPERTY(EditAnywhere)
 	float LookSensitivity_X = 600.f;
@@ -118,4 +118,6 @@ public:
 	void ApplyGravity(float DeltaTime);
 	void CheckInAir();
 	void Land(FVector ImpactPoint);
+	
+	bool HandleSlopeMovement(const FVector& MoveDirection, float DeltaTime);
 };
