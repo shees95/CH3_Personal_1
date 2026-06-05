@@ -9,5 +9,6 @@ UCLASS()
 class CH3_PERSONAL_1_API ACH3_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	ACH3_GameMode();
 };
