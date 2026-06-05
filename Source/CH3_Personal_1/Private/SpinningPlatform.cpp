@@ -13,7 +13,7 @@ void ASpinningPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(BlickTimerHandle, this, &ASpinningPlatform::PlatformAppear, TimeToDisappear);
+	if (IsBlink) GetWorld()->GetTimerManager().SetTimer(BlickTimerHandle, this, &ASpinningPlatform::PlatformAppear, TimeToDisappear);
 	
 }
 
@@ -40,5 +40,5 @@ void ASpinningPlatform::PlatformAppear()
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
 	
-	GetWorld()->GetTimerManager().SetTimer(BlickTimerHandle, this, &ASpinningPlatform::PlatformAppear, TimeToDisappear);
+	GetWorld()->GetTimerManager().SetTimer(BlickTimerHandle, this, &ASpinningPlatform::PlatformDisappear, TimeToDisappear);
 }

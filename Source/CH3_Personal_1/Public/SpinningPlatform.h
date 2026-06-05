@@ -23,7 +23,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(EditAnywhere)
+	bool IsBlink = false;
+	
+	UPROPERTY(EditAnywhere)
 	float TimeToAppear = 1.f;
+	
+	UPROPERTY(EditAnywhere)
 	float TimeToDisappear = 3.5f;
 	FTimerHandle BlickTimerHandle;
 	
