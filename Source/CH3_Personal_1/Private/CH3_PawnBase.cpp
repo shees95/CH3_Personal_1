@@ -17,6 +17,8 @@ ACH3_PawnBase::ACH3_PawnBase()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
+	Tags.Add(FName("Player"));
+	
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Root"));
 	SetRootComponent(Capsule);
 	
