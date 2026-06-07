@@ -29,15 +29,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
 	TArray<TSubclassOf<AActor>> ItemList;
 	
-	void SpawnRandomItem();
+	
 	FItemSpawnRow* GetRandomItem() const;
 	
 	FVector GetRandomPointInVolumn() const;
 	
 	
 public:
+	AActor* SpawnRandomItem();
 	
-	void SpawnItem(TSubclassOf<AActor> ItemClass);
+	AActor* SpawnItem(TSubclassOf<AActor> ItemClass);
 	
 	
 };

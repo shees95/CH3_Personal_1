@@ -18,11 +18,6 @@ ASpawnVolumn::ASpawnVolumn()
 void ASpawnVolumn::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	for (int i=0;i<10;i++)
-	{
-		SpawnRandomItem();
-	}
 }
 
 FVector ASpawnVolumn::GetRandomPointInVolumn() const
@@ -35,15 +30,17 @@ FVector ASpawnVolumn::GetRandomPointInVolumn() const
 	return BoxOrigin + FVector(FMath::FRandRange(-BoxExtent.X, BoxExtent.X), FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y), FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
 }
 
-void ASpawnVolumn::SpawnRandomItem()
+AActor* ASpawnVolumn::SpawnRandomItem()
 {
 	if (FItemSpawnRow* SelectedRow = GetRandomItem())
 	{
 		if (UClass* ActualClass = SelectedRow->ItemClass.Get())
 		{
-			SpawnItem(ActualClass);
+			return SpawnItem(ActualClass);
 		}
 	}
+	
+	return nullptr;
 }
 
 FItemSpawnRow* ASpawnVolumn::GetRandomItem() const
@@ -83,9 +80,11 @@ FItemSpawnRow* ASpawnVolumn::GetRandomItem() const
 	return nullptr;
 }
 
-void ASpawnVolumn::SpawnItem(TSubclassOf<AActor> ItemClass)
+AActor* ASpawnVolumn::SpawnItem(TSubclassOf<AActor> ItemClass)
 {
-	if (!ItemClass) return;
+	if (!ItemClass) return nullptr;
 	
-	GetWorld()->SpawnActor<AActor>(ItemClass, GetRandomPointInVolumn(), FRotator::ZeroRotator);
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ItemClass, GetRandomPointInVolumn(), FRotator::ZeroRotator);
+	
+	return SpawnedActor;
 }
