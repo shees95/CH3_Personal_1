@@ -23,12 +23,25 @@ AItemBase::AItemBase()
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetState(EItemState::OnSpawned);
 }
 
 void AItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	if (EItemState::OnSpawned == GetState())
+	{
+		// 튀어오름
+		// 튀어오름 끝나면 OnIdle 상태
+		
+	}
+	
+	if (EItemState::OnIdle == GetState())
+	{
+		// Idle에서는 반복 위아래 진자운동
+		
+	}
 }
 
 void AItemBase::ActivateItem(AActor* Activator)
@@ -61,7 +74,7 @@ void AItemBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 
 
 
-void AItemBase::SetState(EItemState NewState, AActor* OtherActor = nullptr)
+void AItemBase::SetState(EItemState NewState, AActor* OtherActor)
 {
 	if (CurrentState == NewState) return;
 

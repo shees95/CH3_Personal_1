@@ -61,7 +61,8 @@ protected:
 	virtual void OnDestroyed();
 	
 public:
-	void SetState(EItemState NewState, AActor* OtherActor);
+	void SetState(EItemState NewState, AActor* OtherActor = nullptr);
+	EItemState GetState() { return CurrentState; }
 	
 	virtual void Tick(float DeltaTime) override;
 	

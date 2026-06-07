@@ -1,5 +1,8 @@
 ﻿#include "CoinItem.h"
 
+#include "CH3_GameState.h"
+#include "Engine/World.h"
+
 
 
 ACoinItem::ACoinItem()
@@ -27,6 +30,15 @@ void ACoinItem::ActivateItem(AActor* Activator)
 	
 	if (Activator && Activator->ActorHasTag("Player"))
 	{
+		if (UWorld* World = GetWorld())
+		{
+			if (ACH3_GameState* GameState = World->GetGameState<ACH3_GameState>())
+			{
+				GameState->AddScore(ItemValue);
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("Score : %d"), GameState->GetScore()));
+			}
+		}
+			
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("Player Gain Coin")));
 	}
 }

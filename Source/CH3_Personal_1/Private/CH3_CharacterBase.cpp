@@ -28,6 +28,10 @@ ACH3_CharacterBase::ACH3_CharacterBase()
 	
 	// 이동 방향으로 캐릭터 메시 자동 회전
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	
+	MaxHealth = 100.f;
+	Health = MaxHealth;
+	
 }
 
 void ACH3_CharacterBase::BeginPlay()
@@ -44,6 +48,31 @@ void ACH3_CharacterBase::BeginPlay()
 	if (!Subsystem) return;
 
 	Subsystem->AddMappingContext(IMC_Player, 0);
+}
+
+float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	Health = FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
+	UE_LOG(LogTemp, Warning, TEXT("Health Decrease"));
+	
+	if (Health <= 0)
+	{
+		OnDeath();
+	}
+	
+	return ActualDamage;
+}
+
+void ACH3_CharacterBase::OnDeath()
+{
+	// 사망 애니메이션
+	
+	// 사망 UI
+	
+	// 게임 오버
 }
 
 // Called every frame
@@ -70,6 +99,12 @@ void ACH3_CharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 }
 
+
+void ACH3_CharacterBase::AddHealth(float Amount)
+{
+	Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
+	UE_LOG(LogTemp, Warning, TEXT("health increase"));
+}
 
 void ACH3_CharacterBase::DoMove(const FInputActionValue& Value)
 {

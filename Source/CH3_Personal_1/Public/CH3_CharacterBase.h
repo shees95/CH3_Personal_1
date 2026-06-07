@@ -26,6 +26,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* SkeletalMesh;
 	
@@ -49,6 +50,15 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* IMC_Player;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
+	float MaxHealth;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
+	float Health;
+	
+	void OnDeath();
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -56,6 +66,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintPure, Category="Health")
+	float GetHealth() const { return Health; }
+	
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void AddHealth(float Amount);
+	
+	
 	void DoMove(const FInputActionValue& Value);
 	void DoLook(const FInputActionValue& Value);
 	void DoJump(const FInputActionValue& Value);

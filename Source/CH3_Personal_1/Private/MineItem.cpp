@@ -1,6 +1,7 @@
 ﻿#include "MineItem.h"
 
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AMineItem::AMineItem()
@@ -54,6 +55,11 @@ void AMineItem::ActivateItem(AActor* Activator)
 	for (AActor* Actor : OverlappingActors)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("%s has hitten"), *Actor->GetName()));
+		if (Actor && Actor->ActorHasTag("player"))
+		{
+			UGameplayStatics::ApplyDamage(Actor, ExplosionDamage, nullptr, this, UDamageType::StaticClass());
+		}
+		
 	}
 	
 	

@@ -1,7 +1,8 @@
 #include "CH3_GameMode.h"
-#include "CH3_PawnBase.h"
+#include "CH3_GameState.h"
+
 
 ACH3_GameMode::ACH3_GameMode()
 {
-	DefaultPawnClass = ACH3_PawnBase::StaticClass();
+	GameStateClass = ACH3_GameState::StaticClass();
 }
