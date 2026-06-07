@@ -55,8 +55,6 @@ private:
 	UInputMappingContext* IMC_Player;
 	
 	// 이동 함수
-	
-	
 	UPROPERTY(EditAnywhere)
 	float OriginMoveSpeed = 350.f;
 	float MoveSpeed;
