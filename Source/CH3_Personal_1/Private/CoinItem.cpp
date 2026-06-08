@@ -34,9 +34,7 @@ void ACoinItem::ActivateItem(AActor* Activator)
 		{
 			if (ACH3_GameState* GameState = World->GetGameState<ACH3_GameState>())
 			{
-				GameState->AddScore(ItemValue);
-				GameState->OnCoinCollected();
-				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("Score : %d"), GameState->GetScore()));
+				GameState->OnCoinCollected(this);
 			}
 		}
 	}

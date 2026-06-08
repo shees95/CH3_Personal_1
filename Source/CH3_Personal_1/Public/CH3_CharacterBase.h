@@ -7,9 +7,6 @@
 class USpringArmComponent;
 class UCameraComponent;
 
-// HP 변경 시 퍼센트(0.0~1.0) 전달
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, float, Percent);
-
 UCLASS()
 class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter
 {
@@ -17,11 +14,7 @@ class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter
 
 public:
 	ACH3_CharacterBase();
-
-	// Controller가 바인딩할 HP 변경 델리게이트
-	UPROPERTY(BlueprintAssignable, Category = "Health")
-	FOnHealthChangedDelegate OnHealthChanged;
-
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -48,6 +41,9 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetMaxHealth() const { return MaxHealth; }
+	
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealth() const { return Health; }
 

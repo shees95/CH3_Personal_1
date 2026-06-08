@@ -23,6 +23,8 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	
+	int32 GetItemValue() const { return ItemValue; }
+	
 	virtual void ActivateItem(AActor* Activator) override;
 	virtual void DestroyItem() override;
 };
