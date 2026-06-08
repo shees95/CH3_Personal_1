@@ -159,6 +159,8 @@ void ACH3_GameState::InProgress()
 	
 	const int32 ItemToSpawn = WavesInfo[CurrentWaveIndex].MaxItems;
 	
+	LevelDuration = WavesInfo[CurrentWaveIndex].MaxLevelDuration;
+	
 	// 실제 스폰
 	ASpawnVolumn* SpawnVolumn = Cast<ASpawnVolumn>(FoundVolumns[0]);
 	

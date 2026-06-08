@@ -1,17 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h"
 #include "CH3_CharacterBase.generated.h"
-
-class UInputMappingContext;
-class UInputAction;
 
 class USpringArmComponent;
 class UCameraComponent;
+
+// HP 변경 시 퍼센트(0.0~1.0) 전달
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, float, Percent);
 
 UCLASS()
 class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter
@@ -19,63 +16,44 @@ class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ACH3_CharacterBase();
 
+	// Controller가 바인딩할 HP 변경 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FOnHealthChangedDelegate OnHealthChanged;
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator, AActor* DamageCauser) override;
+
 	UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* SkeletalMesh;
-	
+	TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
+
 	UPROPERTY(EditAnywhere)
-	USpringArmComponent* SpringArm;
-	
+	TObjectPtr<USpringArmComponent> SpringArm;
+
 	UPROPERTY(EditAnywhere)
-	UCameraComponent* Camera;
-	
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Move;
-	
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Look;
-	
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Jump;
-	
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Crouch;
-	
-	UPROPERTY(EditAnywhere)
-	UInputMappingContext* IMC_Player;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
-	float MaxHealth;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
-	float Health;
-	
+	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float MaxHealth = 100.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	float Health = 100.f;
+
 	void OnDeath();
-	
-public:	
-	// Called every frame
+
+public:
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintPure, Category="Health")
+	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealth() const { return Health; }
-	
+
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetHealthPercent() const { return MaxHealth > 0.f ? Health / MaxHealth : 0.f; }
+
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void AddHealth(float Amount);
-	
-	
-	void DoMove(const FInputActionValue& Value);
-	void DoLook(const FInputActionValue& Value);
-	void DoJump(const FInputActionValue& Value);
-	void DoCrouch(const FInputActionValue& Value);
-	
 };

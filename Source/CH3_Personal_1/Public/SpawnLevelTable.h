@@ -27,6 +27,9 @@ struct FSpawnWaveTable
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxItems;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxLevelDuration;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSpawnItemTable> ItemList;
