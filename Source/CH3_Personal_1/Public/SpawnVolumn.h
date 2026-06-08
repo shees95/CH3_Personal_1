@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "ItemSpawnRow.h"
+#include "SpawnLevelTable.h"
 #include "GameFramework/Actor.h"
 #include "SpawnVolumn.generated.h"
 
@@ -23,21 +23,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning")
 	TObjectPtr<UBoxComponent> SpawningBox;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning")
-	TObjectPtr<UDataTable> ItemDataTable;
+	FSpawnWaveTable* SpawnWaveTable;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
-	TArray<TSubclassOf<AActor>> ItemList;
-	
-	
-	FItemSpawnRow* GetRandomItem() const;
+	FSpawnItemTable* GetRandomItem() const;
 	
 	FVector GetRandomPointInVolumn() const;
 	
 	
 public:
+	void SetSpawnWaveInfo(FSpawnWaveTable& NewSpawnWaveTable);
 	AActor* SpawnRandomItem();
-	
 	AActor* SpawnItem(TSubclassOf<AActor> ItemClass);
 	
 	

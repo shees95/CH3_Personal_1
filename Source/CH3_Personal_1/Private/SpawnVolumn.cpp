@@ -12,7 +12,7 @@ ASpawnVolumn::ASpawnVolumn()
 	SpawningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawningBox"));
 	SpawningBox->SetupAttachment(Root);
 	
-	ItemDataTable = nullptr;
+	SpawnWaveTable = nullptr;
 }
 
 void ASpawnVolumn::BeginPlay()
@@ -30,9 +30,14 @@ FVector ASpawnVolumn::GetRandomPointInVolumn() const
 	return BoxOrigin + FVector(FMath::FRandRange(-BoxExtent.X, BoxExtent.X), FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y), FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
 }
 
+void ASpawnVolumn::SetSpawnWaveInfo(FSpawnWaveTable& NewSpawnWaveTable)
+{
+	SpawnWaveTable = &NewSpawnWaveTable;
+}
+
 AActor* ASpawnVolumn::SpawnRandomItem()
 {
-	if (FItemSpawnRow* SelectedRow = GetRandomItem())
+	if (FSpawnItemTable* SelectedRow = GetRandomItem())
 	{
 		if (UClass* ActualClass = SelectedRow->ItemClass.Get())
 		{
@@ -43,37 +48,29 @@ AActor* ASpawnVolumn::SpawnRandomItem()
 	return nullptr;
 }
 
-FItemSpawnRow* ASpawnVolumn::GetRandomItem() const
+FSpawnItemTable* ASpawnVolumn::GetRandomItem() const
 {
-	if (!ItemDataTable) return nullptr;
+	if (!SpawnWaveTable) return nullptr;
 	
-	TArray<FItemSpawnRow*> AllItemRows;
-	
-	static const FString ContextString(TEXT("ItemSpawnContextError"));
-	ItemDataTable->GetAllRows(ContextString, AllItemRows);
-	
-	if (AllItemRows.IsEmpty()) return nullptr;
+	if (SpawnWaveTable->ItemList.IsEmpty()) return nullptr;
 	
 	float TotalChance = 0.f;
 	
-	for (const FItemSpawnRow* Row : AllItemRows)
+	for (const FSpawnItemTable Row : SpawnWaveTable->ItemList)
 	{
-		if (Row)
-		{
-			TotalChance += Row->SpawnChance;
-		}
+		TotalChance += Row.SpawnChance;
 	}
 	
 	const float RandValue = FMath::FRandRange(0.f, TotalChance);
 	float AccumulatedChance = 0.f;
 	
-	for (FItemSpawnRow* Row : AllItemRows)
+	for (FSpawnItemTable& Row : SpawnWaveTable->ItemList)
 	{
-		AccumulatedChance += Row->SpawnChance;
+		AccumulatedChance += Row.SpawnChance;
 		
 		if (RandValue <= AccumulatedChance)
 		{
-			return Row;
+			return &Row;
 		}
 	}
 	
