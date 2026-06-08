@@ -4,8 +4,11 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Blueprint/UserWidget.h"
 
 ACH3_ControllerBase::ACH3_ControllerBase()
+: IMC_Player(nullptr), IA_Move(nullptr), IA_Look(nullptr)
+	,IA_Jump(nullptr), IA_Crouch(nullptr), HUDWidgetClass(nullptr), HUDWidget(nullptr)
 {
 }
 
@@ -20,6 +23,16 @@ void ACH3_ControllerBase::BeginPlay()
 		{
 			if (IMC_Player) Subsystem->AddMappingContext(IMC_Player, 0);
 		}
+	}
+	
+	if (HUDWidgetClass)
+	{
+		HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
+		}
+		
 	}
 }
 
@@ -40,11 +53,7 @@ void ACH3_ControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	// 캐릭터의 HP 델리게이트에 바인딩
-	if (ACH3_CharacterBase* MyCharacter = Cast<ACH3_CharacterBase>(InPawn))
-	{
-		MyCharacter->OnHealthChanged.AddDynamic(this, &ACH3_ControllerBase::OnHealthChanged);
-	}
+	
 }
 
 // ── 입력 ─────────────────────────────────────────────────────────
@@ -88,11 +97,4 @@ void ACH3_ControllerBase::DoCrouch(const FInputActionValue& Value)
 
 	const bool bPressed = Value.Get<bool>();
 	bPressed ? Char->Crouch() : Char->UnCrouch();
-}
-
-// ── UI ───────────────────────────────────────────────────────────
-
-void ACH3_ControllerBase::OnHealthChanged(float Percent)
-{
-	UpdateHP(Percent);
 }

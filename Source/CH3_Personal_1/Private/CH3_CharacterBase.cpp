@@ -1,5 +1,6 @@
 #include "CH3_CharacterBase.h"
 
+#include "CH3_GameState.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -47,14 +48,13 @@ float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 	Health = FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
 	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
 
-	// HP 변경 델리게이트 브로드캐스트
-	OnHealthChanged.Broadcast(GetHealthPercent());
-
+	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
+	
 	if (Health <= 0.f)
 	{
 		OnDeath();
 	}
-
+	
 	return ActualDamage;
 }
 
@@ -62,9 +62,8 @@ void ACH3_CharacterBase::AddHealth(float Amount)
 {
 	Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
 	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
-
-	// HP 변경 델리게이트 브로드캐스트
-	OnHealthChanged.Broadcast(GetHealthPercent());
+	
+	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
 }
 
 void ACH3_CharacterBase::OnDeath()

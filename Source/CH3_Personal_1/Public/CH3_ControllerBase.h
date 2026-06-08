@@ -39,22 +39,23 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> IA_Crouch;
 
+	// UI
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="HUD")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="HUD")
+	UUserWidget* HUDWidget;
+	
+	
+	
 	// 입력 핸들러
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void DoJump(const FInputActionValue& Value);
 	void DoCrouch(const FInputActionValue& Value);
-
-	// HP 변경 콜백 (CharacterBase 델리게이트에 바인딩)
-	UFUNCTION()
-	void OnHealthChanged(float Percent);
-
+	
 public:
-	// GameState 등 외부에서 진행도 갱신 시 호출
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateProgress(float Percent);
+	UFUNCTION(BlueprintPure, Category="HUD")
+	UUserWidget* GetHUDWidget() const { return HUDWidget; } 
 
-	// HP UI 직접 갱신 (필요 시 외부 호출 가능)
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void UpdateHP(float Percent);
 };
