@@ -28,8 +28,6 @@ void APotionItem::ActivateItem(AActor* Activator)
 	
 	if (Activator && Activator->ActorHasTag("Player"))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("Player has Healed")));
-		
 		if (ACH3_CharacterBase* PlayerCharacter = Cast<ACH3_CharacterBase>(Activator))
 		{
 			PlayerCharacter->AddHealth(ItemValue);
