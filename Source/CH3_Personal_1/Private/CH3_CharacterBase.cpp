@@ -76,18 +76,6 @@ float ACH3_CharacterBase::GetHealthPercent() const
 	return Max > 0.f ? GetHealth() / Max : 0.f;
 }
 
-void ACH3_CharacterBase::AddHealth(float Amount)
-{
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-	if (!ASC) return;
-
-	const UCH3_AttributeSet* AS = ASC->GetSet<UCH3_AttributeSet>();
-	if (!AS) return;
-
-	float NewHP = FMath::Clamp(AS->GetHP() + Amount, 0.f, AS->GetMAXHP());
-	const_cast<UCH3_AttributeSet*>(AS)->SetHP(NewHP);
-}
-
 void ACH3_CharacterBase::OnDeath()
 {
 	// 사망 애니메이션

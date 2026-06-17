@@ -1,20 +1,17 @@
-﻿#include "PotionItem.h"
+#include "PotionItem.h"
 
+#include "AbilitySystemComponent.h"
 #include "CH3_CharacterBase.h"
-
 
 APotionItem::APotionItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
-	ItemValue = 50;
 	ItemType = "DefaultPotion";
 }
 
 void APotionItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void APotionItem::Tick(float DeltaTime)
@@ -25,18 +22,22 @@ void APotionItem::Tick(float DeltaTime)
 void APotionItem::ActivateItem(AActor* Activator)
 {
 	Super::ActivateItem(Activator);
-	
-	if (Activator && Activator->ActorHasTag("Player"))
-	{
-		if (ACH3_CharacterBase* PlayerCharacter = Cast<ACH3_CharacterBase>(Activator))
-		{
-			PlayerCharacter->AddHealth(ItemValue);
-		}
-	}
+
+	if (!Activator || !Activator->ActorHasTag("Player")) return;
+
+	ACH3_CharacterBase* Character = Cast<ACH3_CharacterBase>(Activator);
+	if (!Character) return;
+
+	UAbilitySystemComponent* ASC = Character->GetAbilitySystemComponent();
+	if (!ASC || !HealEffect) return;
+
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	Context.AddSourceObject(this);
+	FGameplayEffectSpecHandle Spec = ASC->MakeOutgoingSpec(HealEffect, 1.f, Context);
+	ASC->ApplyGameplayEffectSpecToSelf(*Spec.Data.Get());
 }
 
 void APotionItem::DestroyItem()
 {
 	Super::DestroyItem();
 }
-
