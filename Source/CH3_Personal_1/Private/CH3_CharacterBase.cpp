@@ -1,6 +1,9 @@
 #include "CH3_CharacterBase.h"
 
 #include "CH3_GameState.h"
+#include "CH3_PlayerState.h"
+#include "CH3_AttributeSet.h"
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,7 +22,6 @@ ACH3_CharacterBase::ACH3_CharacterBase()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
-	// 캐릭터가 컨트롤러 Yaw 따라 회전 (카메라 방향 = 캐릭터 방향)
 	bUseControllerRotationYaw   = true;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll  = false;
@@ -30,9 +32,30 @@ ACH3_CharacterBase::ACH3_CharacterBase()
 	Health    = MaxHealth;
 }
 
+UAbilitySystemComponent* ACH3_CharacterBase::GetAbilitySystemComponent() const
+{
+	ACH3_PlayerState* PS = GetPlayerState<ACH3_PlayerState>();
+	return PS ? PS->GetAbilitySystemComponent() : nullptr;
+}
+
 void ACH3_CharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ACH3_CharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ACH3_PlayerState* PS = GetPlayerState<ACH3_PlayerState>();
+	if (!PS) return;
+
+	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+	ASC->InitAbilityActorInfo(PS, this);
+	PS->InitAbilities();
+
+	ASC->GetGameplayAttributeValueChangeDelegate(UCH3_AttributeSet::GetMoveSpeedAttribute())
+		.AddUObject(this, &ACH3_CharacterBase::OnMoveSpeedChanged);
 }
 
 void ACH3_CharacterBase::Tick(float DeltaTime)
@@ -49,12 +72,12 @@ float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
 
 	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
-	
+
 	if (Health <= 0.f)
 	{
 		OnDeath();
 	}
-	
+
 	return ActualDamage;
 }
 
@@ -62,8 +85,13 @@ void ACH3_CharacterBase::AddHealth(float Amount)
 {
 	Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
 	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
-	
+
 	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
+}
+
+void ACH3_CharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& Data)
+{
+	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
 }
 
 void ACH3_CharacterBase::OnDeath()

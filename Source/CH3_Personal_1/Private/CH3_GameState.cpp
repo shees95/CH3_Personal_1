@@ -26,6 +26,7 @@ ACH3_GameState::ACH3_GameState()
 void ACH3_GameState::BeginPlay()
 {
 	Super::BeginPlay();
+	if (GetWorld()->GetFName() == FName("Main")) return;
 	GetWorldTimerManager().SetTimer(HUDUpdateTimerHandle, this, &ACH3_GameState::UpdateHUD, 0.1, true);
 	SetState(EWaveState::ReadyLevel);
 }
