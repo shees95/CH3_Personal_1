@@ -1,5 +1,6 @@
 #include "CH3_ControllerBase.h"
 
+#include "CH3_CharacterBase.h"
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -52,6 +53,11 @@ void ACH3_ControllerBase::SetupInputComponent()
 void ACH3_ControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	if (ACH3_CharacterBase* MyCharacter = Cast<ACH3_CharacterBase>(InPawn))
+	{
+		MyCharacter->OnHealthChanged.AddDynamic(this, &ACH3_ControllerBase::OnHealthChanged);
+	}
 }
 
 // ── 입력 ─────────────────────────────────────────────────────────
@@ -107,5 +113,10 @@ void ACH3_ControllerBase::UpdateHP(float Percent)
 void ACH3_ControllerBase::UpdateProgress(float Percent)
 {
 	// TODO: InProgressWidget->SetProgress(Percent)
+}
+
+void ACH3_ControllerBase::OnHealthChanged(float Percent)
+{
+	UpdateHP(Percent);
 }
 

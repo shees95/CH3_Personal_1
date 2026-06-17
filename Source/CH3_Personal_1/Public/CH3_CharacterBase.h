@@ -9,6 +9,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, float, Percent);
+
 UCLASS()
 class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter, public IAbilitySystemInterface
 {
@@ -16,6 +18,9 @@ class CH3_PERSONAL_1_API ACH3_CharacterBase : public ACharacter, public IAbility
 
 public:
 	ACH3_CharacterBase();
+
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FOnHealthChangedDelegate OnHealthChanged;
 
 protected:
 	virtual void BeginPlay() override;

@@ -52,6 +52,10 @@ protected:
 	void DoJump(const FInputActionValue& Value);
 	void DoCrouch(const FInputActionValue& Value);
 
+	// HP 변경 콜백
+	UFUNCTION()
+	void OnHealthChanged(float Percent);
+
 
 public:
 	UFUNCTION(BlueprintPure, Category="HUD")
