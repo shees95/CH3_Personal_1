@@ -15,5 +15,5 @@ void ACH3_PlayerState::InitAbilities()
 	{
 		if (!AbilityClass) continue;
 		ASC->GiveAbility(FGameplayAbilitySpec(AbilityClass, 1));
-	git 
+	} 
 }
