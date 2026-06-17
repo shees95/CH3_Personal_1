@@ -53,9 +53,19 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void DoJump(const FInputActionValue& Value);
 	void DoCrouch(const FInputActionValue& Value);
-	
+
+	// HP 변경 콜백 (CharacterBase 델리게이트에 바인딩)
+	UFUNCTION()
+	void OnHealthChanged(float Percent);
+
 public:
 	UFUNCTION(BlueprintPure, Category="HUD")
 	UUserWidget* GetHUDWidget() const { return HUDWidget; }
 	UInputMappingContext* GetIMC() const { return IMC_Player; }
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateProgress(float Percent);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void UpdateHP(float Percent);
 };
