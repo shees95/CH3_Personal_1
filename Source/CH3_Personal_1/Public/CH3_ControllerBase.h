@@ -7,8 +7,6 @@
 
 class UInputMappingContext;
 class UInputAction;
-class UCH3_InProgressWidget;
-class ACH3_CharacterBase;
 
 UCLASS()
 class CH3_PERSONAL_1_API ACH3_ControllerBase : public APlayerController
@@ -54,9 +52,6 @@ protected:
 	void DoJump(const FInputActionValue& Value);
 	void DoCrouch(const FInputActionValue& Value);
 
-	// HP 변경 콜백 (CharacterBase 델리게이트에 바인딩)
-	UFUNCTION()
-	void OnHealthChanged(float Percent);
 
 public:
 	UFUNCTION(BlueprintPure, Category="HUD")
