@@ -56,6 +56,6 @@ protected:
 	
 public:
 	UFUNCTION(BlueprintPure, Category="HUD")
-	UUserWidget* GetHUDWidget() const { return HUDWidget; } 
-
+	UUserWidget* GetHUDWidget() const { return HUDWidget; }
+	UInputMappingContext* GetIMC() const { return IMC_Player; }
 };
