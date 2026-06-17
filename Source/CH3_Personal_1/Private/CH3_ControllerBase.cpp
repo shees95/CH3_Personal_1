@@ -1,5 +1,6 @@
 #include "CH3_ControllerBase.h"
 
+#include "AbilitySystemComponent.h"
 #include "CH3_CharacterBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -15,7 +16,7 @@ ACH3_ControllerBase::ACH3_ControllerBase()
 void ACH3_ControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	// IMC 등록
 	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
@@ -52,8 +53,6 @@ void ACH3_ControllerBase::SetupInputComponent()
 void ACH3_ControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	
 }
 
 // ── 입력 ─────────────────────────────────────────────────────────
@@ -62,7 +61,7 @@ void ACH3_ControllerBase::Move(const FInputActionValue& Value)
 {
 	APawn* MyPawn = GetPawn();
 	if (!MyPawn) return;
-
+	
 	const FVector2D MoveValue = Value.Get<FVector2D>();
 	if (MoveValue.IsNearlyZero()) return;
 

@@ -1,5 +1,7 @@
 ﻿#include "MineItem.h"
 
+#include "AbilitySystemComponent.h"
+#include "CH3_CharacterBase.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -58,6 +60,16 @@ void AMineItem::ActivateItem(AActor* Activator)
 		if (Actor && Actor->ActorHasTag("player"))
 		{
 			UGameplayStatics::ApplyDamage(Actor, ExplosionDamage, nullptr, this, UDamageType::StaticClass());
+
+			if (ACH3_CharacterBase* Character = Cast<ACH3_CharacterBase>(Actor))
+			{
+				if (UAbilitySystemComponent* ASC = Character->GetAbilitySystemComponent())
+				{
+					FGameplayTagContainer Tag;
+					Tag.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Slow")));
+					ASC->TryActivateAbilitiesByTag(Tag);
+				}
+			}
 		}
 		
 	}

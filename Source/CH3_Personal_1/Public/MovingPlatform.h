@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
 #include "PlatformBase.h"
 #include "MovingPlatform.generated.h"
 
@@ -44,4 +45,11 @@ public:
 	void SetIsReverse(bool _InIsReverse) { IsReverse = _InIsReverse; }
 	bool GetIsReverse() { return IsReverse; }
 	void MoveEndPoint();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="ASC")
+	TSubclassOf<UGameplayAbility> StunAbilityClass;
+	
+protected:
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,
+		bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 };
