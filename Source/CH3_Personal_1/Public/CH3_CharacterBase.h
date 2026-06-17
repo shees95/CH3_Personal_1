@@ -62,6 +62,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void AddHealth(float Amount);
 
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void SetHP(float NewHealth);
+
 	UFUNCTION(BlueprintPure, Category="ASC")
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 };

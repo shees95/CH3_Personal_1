@@ -68,11 +68,7 @@ float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	Health = FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
-	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
-
-	OnHealthChanged.Broadcast(GetHealthPercent());
-	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
+	SetHP(Health - DamageAmount);
 
 	if (Health <= 0.f)
 	{
@@ -84,7 +80,12 @@ float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 
 void ACH3_CharacterBase::AddHealth(float Amount)
 {
-	Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
+	SetHP(Health + Amount);
+}
+
+void ACH3_CharacterBase::SetHP(float NewHealth)
+{
+	Health = FMath::Clamp(NewHealth, 0.f, MaxHealth);
 	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
 
 	OnHealthChanged.Broadcast(GetHealthPercent());
