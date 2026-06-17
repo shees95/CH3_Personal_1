@@ -18,7 +18,16 @@ class CH3_PERSONAL_1_API UCH3_AttributeSet : public UAttributeSet
 
 public:
 	UCH3_AttributeSet();
+	
+	UPROPERTY(BlueprintReadOnly, Category="HP")
+	FGameplayAttributeData HP;
+	ATTRIBUTE_ACCESSORS(UCH3_AttributeSet, HP)
 
+	
+	UPROPERTY(BlueprintReadOnly, Category="MAXHP")
+	FGameplayAttributeData MAXHP;
+	ATTRIBUTE_ACCESSORS(UCH3_AttributeSet, MAXHP)
+	
 	UPROPERTY(BlueprintReadOnly, Category="Movement")
 	FGameplayAttributeData MoveSpeed;
 	ATTRIBUTE_ACCESSORS(UCH3_AttributeSet, MoveSpeed)

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "ItemBase.h"
 #include "GameFramework/Actor.h"
 #include "MineItem.generated.h"
@@ -23,10 +24,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	float ExplosionDelay;
-	UPROPERTY(EditAnywhere)
-	float ExplosionDamage;
+
 	UPROPERTY(EditAnywhere)
 	float ExplosionRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category="GAS")
+	TSubclassOf<UGameplayEffect> DamageEffect;
 	
 	FTimerHandle ExplosionTimerHandle;
 	

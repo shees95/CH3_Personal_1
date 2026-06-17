@@ -1,8 +1,7 @@
 #include "CH3_CharacterBase.h"
 
-#include "CH3_GameState.h"
-#include "CH3_PlayerState.h"
 #include "CH3_AttributeSet.h"
+#include "CH3_PlayerState.h"
 #include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -27,9 +26,6 @@ ACH3_CharacterBase::ACH3_CharacterBase()
 	bUseControllerRotationRoll  = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-
-	MaxHealth = 100.f;
-	Health    = MaxHealth;
 }
 
 UAbilitySystemComponent* ACH3_CharacterBase::GetAbilitySystemComponent() const
@@ -53,9 +49,6 @@ void ACH3_CharacterBase::PossessedBy(AController* NewController)
 	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 	ASC->InitAbilityActorInfo(PS, this);
 	PS->InitAbilities();
-
-	ASC->GetGameplayAttributeValueChangeDelegate(UCH3_AttributeSet::GetMoveSpeedAttribute())
-		.AddUObject(this, &ACH3_CharacterBase::OnMoveSpeedChanged);
 }
 
 void ACH3_CharacterBase::Tick(float DeltaTime)
@@ -63,38 +56,36 @@ void ACH3_CharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-float ACH3_CharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
+float ACH3_CharacterBase::GetHealth() const
 {
-	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+		return ASC->GetNumericAttribute(UCH3_AttributeSet::GetHPAttribute());
+	return 0.f;
+}
 
-	SetHP(Health - DamageAmount);
+float ACH3_CharacterBase::GetMaxHealth() const
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+		return ASC->GetNumericAttribute(UCH3_AttributeSet::GetMAXHPAttribute());
+	return 1.f;
+}
 
-	if (Health <= 0.f)
-	{
-		OnDeath();
-	}
-
-	return ActualDamage;
+float ACH3_CharacterBase::GetHealthPercent() const
+{
+	float Max = GetMaxHealth();
+	return Max > 0.f ? GetHealth() / Max : 0.f;
 }
 
 void ACH3_CharacterBase::AddHealth(float Amount)
 {
-	SetHP(Health + Amount);
-}
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!ASC) return;
 
-void ACH3_CharacterBase::SetHP(float NewHealth)
-{
-	Health = FMath::Clamp(NewHealth, 0.f, MaxHealth);
-	UE_LOG(LogTemp, Warning, TEXT("Health : %.1f / %.1f"), Health, MaxHealth);
+	const UCH3_AttributeSet* AS = ASC->GetSet<UCH3_AttributeSet>();
+	if (!AS) return;
 
-	OnHealthChanged.Broadcast(GetHealthPercent());
-	Cast<ACH3_GameState>(GetWorld()->GetGameState())->UpdateHUD();
-}
-
-void ACH3_CharacterBase::OnMoveSpeedChanged(const FOnAttributeChangeData& Data)
-{
-	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
+	float NewHP = FMath::Clamp(AS->GetHP() + Amount, 0.f, AS->GetMAXHP());
+	const_cast<UCH3_AttributeSet*>(AS)->SetHP(NewHP);
 }
 
 void ACH3_CharacterBase::OnDeath()
