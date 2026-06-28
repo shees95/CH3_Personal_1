@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "ItemBase.h"
 #include "GameFramework/Actor.h"
 #include "PotionItem.generated.h"
@@ -14,9 +15,8 @@ public:
 	APotionItem();
 
 protected:
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ItemValue;
+	UPROPERTY(EditDefaultsOnly, Category="GAS")
+	TSubclassOf<UGameplayEffect> HealEffect;
 	
 	virtual void BeginPlay() override;
 

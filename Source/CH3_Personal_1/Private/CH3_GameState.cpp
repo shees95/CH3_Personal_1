@@ -12,6 +12,8 @@
 #include "Components/RadialSlider.h"
 #include "Components/TextBlock.h"
 
+
+
 ACH3_GameState::ACH3_GameState()
 {
 	WaveDuration = 30.f;
@@ -111,6 +113,8 @@ void ACH3_GameState::GameOver()
 	// 더이상 추가 행동 없음
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Game Over"));
 	UE_LOG(LogTemp, Warning, TEXT("Game Over"));
+	
+	OnGameOverDeligate.Broadcast();
 	
 	UpdateHUD();
 }
@@ -235,6 +239,7 @@ void ACH3_GameState::EndLevel()
 				{
 					// 모든 레벨 종료
 					SetState(EWaveState::GameOver);
+					GameOver();
 				}
 				else
 				{
