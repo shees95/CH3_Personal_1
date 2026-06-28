@@ -33,12 +33,14 @@ protected:
 	
 	FTimerHandle ExplosionTimerHandle;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sound")
+	TObjectPtr<USoundBase> ExplodeSound;
 protected:
 	virtual void OnTriggered(AActor* OtherActor) override;
 	
 public:
 	virtual void Tick(float DeltaTime) override;
-
+	
 	void MineExploder();
 	
 	virtual void ActivateItem(AActor* Activator) override;

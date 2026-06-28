@@ -3,6 +3,7 @@
 #include "AbilitySystemComponent.h"
 #include "CH3_CharacterBase.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMineItem::AMineItem()
 {
@@ -69,6 +70,11 @@ void AMineItem::ActivateItem(AActor* Activator)
 		FGameplayTagContainer SlowTag;
 		SlowTag.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Slow")));
 		ASC->TryActivateAbilitiesByTag(SlowTag);
+	}
+	
+	if (ExplodeSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ExplodeSound, GetActorLocation());
 	}
 
 	SetState(EItemState::OnDestroyed, nullptr);

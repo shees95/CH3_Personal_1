@@ -7,6 +7,7 @@
 
 class ACoinItem;
 
+
 UENUM(BlueprintType)
 enum class EWaveState : uint8
 {
@@ -21,6 +22,8 @@ enum class EWaveState : uint8
 	
 	GameOver
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameDone);
 
 UCLASS()
 class CH3_PERSONAL_1_API ACH3_GameState : public AGameStateBase
@@ -75,6 +78,7 @@ protected:
 	int32 CollectedCoinCount;
 	
 	// State
+	UPROPERTY(BlueprintReadOnly)
 	EWaveState CurrentState;
 	
 	// 웨이브 관련
@@ -102,4 +106,7 @@ public:
 	void UpdateHUD();
 	
 	void OnCoinCollected(ACoinItem* Item);
+	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnGameDone OnGameOverDeligate;
 };
